@@ -31,21 +31,24 @@ function Chat() {
         // listen for chat-message event from server
         // this callback runs when we emit on the server
         // msg argument is the data coming back from the server
-        socket.on("chat-message", (msg) => { 
+        socket.on("chat", (msg) => { 
             setMessages((prev) => [...prev, msg]); // update messages state in component
             // prev is the previous state value and we pass it in to look at it
             // [...prev, msg] is new array with prev messages plus new one on the end
         });
+
+        socket.on("connect", () => console.log("Connected to server! Socket ID:", socket.id));
+        socket.on("connect_error", (err) => console.log("Connection error:", err));
     
         // calls this when component unmounts ie is removed from UI
         return () => {
-            socket.off("chat-message"); // remove listener for now
+            socket.off("chat"); // remove listener for now
         };
     }, []); // [] means run this code when the component mounts
 
     const sendMessage = () => { // assign function to a variable
         if (input.trim() !== "") { // input is what the user typed; trim leading whitespace
-            socket.emit("chat-message", input); // send to server over websocket
+            socket.emit("chat", input); // send to server over websocket
             setInput(""); // reset the state of the input box to be empty
         }
     };
