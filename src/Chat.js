@@ -48,8 +48,7 @@ function Chat() {
 
     const sendMessage = () => { // assign function to a variable
         if (input.trim() !== "") { // input is what the user typed; trim leading whitespace
-            const message = `${socket.id}: ${input}`;
-            socket.emit("chat", message); // send to server over websocket
+            socket.emit("chat", input); // send to server over websocket
             setInput(""); // reset the state of the input box to be empty
         }
     };
@@ -57,9 +56,13 @@ function Chat() {
     return ( // im not gonna bother with this ill learn syntax later
         <div style={{ maxWidth: 400, margin: "0 auto" }}>
           <ul style={{ listStyle: "none", padding: 0 }}>
-            {messages.map((msg, i) => (
-                <li key={i} style={{ marginBottom: 5 }}>{msg}</li>
-            ))}
+          {messages.map((msg, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", marginBottom: 5 }}>
+            <img src={msg.avatar} alt="avatar" width={30} height={30} style={{ borderRadius: "50%", marginRight: 5 }} />
+            <strong style={{ marginRight: 5 }}>{msg.username}:</strong>
+            <span>{msg.text}</span>
+          </div>
+        ))}
           </ul>
           <input
             type="text"
