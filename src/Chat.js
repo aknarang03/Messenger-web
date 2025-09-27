@@ -48,14 +48,14 @@ function Chat() {
 
     const sendMessage = () => { // assign function to a variable
         if (input.trim() !== "") { // input is what the user typed; trim leading whitespace
-            socket.emit("chat", input); // send to server over websocket
+            const message = `${socket.id}: ${input}`;
+            socket.emit("chat", message); // send to server over websocket
             setInput(""); // reset the state of the input box to be empty
         }
     };
 
     return ( // im not gonna bother with this ill learn syntax later
         <div style={{ maxWidth: 400, margin: "0 auto" }}>
-          <h2>Chat Room</h2>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {messages.map((msg, i) => (
                 <li key={i} style={{ marginBottom: 5 }}>{msg}</li>
