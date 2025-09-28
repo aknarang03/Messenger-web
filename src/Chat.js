@@ -37,12 +37,17 @@ function Chat() {
             // [...prev, msg] is new array with prev messages plus new one on the end
         });
 
+        socket.on("chat-history", (msgs) => { // chat-history is a different event than chat
+            setMessages(msgs); // overwrite with full history array
+        });
+
         socket.on("connect", () => console.log("Connected to server! Socket ID:", socket.id));
         socket.on("connect_error", (err) => console.log("Connection error:", err));
     
         // calls this when component unmounts ie is removed from UI
         return () => {
             socket.off("chat"); // remove listener for now
+            socket.off("chat-history");
         };
     }, []); // [] means run this code when the component mounts
 
