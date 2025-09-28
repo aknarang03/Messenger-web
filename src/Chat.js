@@ -63,8 +63,16 @@ function Chat() {
           <ul style={{ listStyle: "none", padding: 0 }}>
           {messages.map((msg, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", marginBottom: 5 }}>
-            <img src={msg.user.avatar} alt="avatar" width={30} height={30} style={{ borderRadius: "50%", marginRight: 5 }} />
-            <strong style={{ marginRight: 5 }}>{msg.user.username}:</strong>
+            {msg.user && (
+                <img
+                src={msg.user.avatar}
+                alt="avatar"
+                width={30}
+                height={30}
+                style={{ borderRadius: "50%", marginRight: 5 }}
+                />
+            )}
+            <strong>{msg.user?.username || 'Unknown'}:</strong>
             <span>{msg.text}</span>
           </div>
         ))}
