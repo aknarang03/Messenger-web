@@ -27,7 +27,11 @@ const navigate = useNavigate();
         alert("Account created! You are now logged in.");
         navigate("/chat");
     } else {
-      alert(data.message);
+      if (data.error) {
+        alert(data.error);
+      } else {
+        alert("Something went wrong");
+      }
     }
   }
 

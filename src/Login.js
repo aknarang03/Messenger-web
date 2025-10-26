@@ -31,7 +31,11 @@ function Login({ setUser }) {
         localStorage.setItem("token", data.token); // save the JWT
         navigate("/chat");
       } else {
-        alert(data.message || "Login failed");
+        if (data.error) {
+          alert(data.error || "Login failed");
+        } else {
+          alert("Something went wrong")
+        }
       }
     } catch (err) {
       console.error("Error logging in:", err);
