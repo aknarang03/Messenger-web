@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // React is the main react library
     // useState is a React Hook that lets you add a state to a component. for re rendering?
     // useEffect is a React Hook that lets you react (lol) to side effects (ie outside of rendering)
@@ -7,9 +7,9 @@ import { io } from "socket.io-client";
 // connects to the socket server as a client
 
 const token = localStorage.getItem("token");
-const socket = io("http://localhost:3000", {
-  auth: {token}, // <– this sends your token in the handshake during connection
-});
+// const socket = io("http://localhost:3000", {
+//   auth: {token}, // <– this sends your token in the handshake during connection
+// });
 
 //const socket = io("http://localhost:3000");
 // same port as I use in server.js
@@ -28,6 +28,8 @@ function Chat() {
         // setInput = function to update input whenever user types
         // useState("") inits as empty string
 
+    const socketRef = useRef(null);
+
     // when you call useState("")
     // it returns ["currentValue", "updateFunction"]
     // so youre setting input to curerntValue and setInput to updateFunction?
@@ -36,6 +38,21 @@ function Chat() {
         // listen for chat-message event from server
         // this callback runs when we emit on the server
         // msg argument is the data coming back from the server
+
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.warn("No token found — user not logged in.");
+            return;
+        }
+
+        socketRef.current = io("http://localhost:3000", {
+            auth: { token },
+        });
+
+        // save socket so we can use it in sendMessage()
+        const socket = socketRef.current;
+
         socket.on("chat", (msg) => { 
             setMessages((prev) => [...prev, msg]); // update messages state in component
             // prev is the previous state value and we pass it in to look at it
@@ -57,6 +74,11 @@ function Chat() {
     }, []); // [] means run this code when the component mounts
 
     const sendMessage = () => { // assign function to a variable
+        const socket = socketRef.current;
+        if (!socket) {
+            console.error("Socket not initialized yet!");
+            return;
+        }
         if (input.trim() !== "") { // input is what the user typed; trim leading whitespace
             socket.emit("chat", input); // send to server over websocket
             setInput(""); // reset the state of the input box to be empty
