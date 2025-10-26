@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
@@ -6,7 +6,14 @@ function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        navigate("/chat");
+      }
+  });
 
   async function handleRegister(e) {
     e.preventDefault();

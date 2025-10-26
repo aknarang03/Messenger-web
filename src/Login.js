@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Login({ setUser }) {
@@ -7,6 +7,14 @@ function Login({ setUser }) {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  // redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/chat");
+    }
+  });
 
   async function handleLogin(e) { // called when form is submitted
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 // React is the main react library
     // useState is a React Hook that lets you add a state to a component. for re rendering?
     // useEffect is a React Hook that lets you react (lol) to side effects (ie outside of rendering)
@@ -19,6 +20,8 @@ function Chat() {
     // they return JSX (HTML-like thing)
     // represents a piece of UI
 
+    const navigate = useNavigate();
+
     const [messages, setMessages] = useState([]); // useState: when the data changes, React automatically re-renders the whole component
         // messages = current value of the state (here it holds all chat msgs)
         // setMessages = a function to update messages
@@ -34,15 +37,12 @@ function Chat() {
     // it returns ["currentValue", "updateFunction"]
     // so youre setting input to curerntValue and setInput to updateFunction?
     
-    useEffect(() => {
-        // listen for chat-message event from server
-        // this callback runs when we emit on the server
-        // msg argument is the data coming back from the server
-
-
+    useEffect(() => { // runs after React renders the Chat component
+        
         const token = localStorage.getItem("token");
         if (!token) {
             console.warn("No token found — user not logged in.");
+            navigate("/login") // send them back to login
             return;
         }
 
@@ -53,6 +53,9 @@ function Chat() {
         // save socket so we can use it in sendMessage()
         const socket = socketRef.current;
 
+        // listen for chat-message event from server
+        // this callback runs when we emit on the server
+        // msg argument is the data coming back from the server
         socket.on("chat", (msg) => { 
             setMessages((prev) => [...prev, msg]); // update messages state in component
             // prev is the previous state value and we pass it in to look at it
@@ -64,7 +67,13 @@ function Chat() {
         });
 
         socket.on("connect", () => console.log("Connected to server! Socket ID:", socket.id));
-        socket.on("connect_error", (err) => console.log("Connection error:", err));
+        socket.on("connect_error", (err) => {
+            console.warn("Socket connection error:", err.message);
+            if (err.message === "Authentication error") {
+                localStorage.removeItem("token"); // clear expired/invalid token
+                window.location.href = "/login"; // redirect
+            }
+        });
     
         // calls this when component unmounts ie is removed from UI
         return () => {
@@ -85,8 +94,23 @@ function Chat() {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        const socket = socketRef.current;
+        if (socket) {
+            socket.disconnect();
+        }
+        navigate("/login");
+    };
+
     return ( // im not gonna bother with this ill learn syntax later
         <div style={{ maxWidth: 400, margin: "0 auto" }}>
+            <button 
+                onClick={handleLogout} 
+                style={{ marginBottom: 10, width: "100%" }}
+            >
+                Logout
+            </button>
           <ul style={{ listStyle: "none", padding: 0 }}>
           {messages.map((msg, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", marginBottom: 5 }}>
