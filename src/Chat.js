@@ -6,7 +6,12 @@ import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 // connects to the socket server as a client
 
-const socket = io("http://localhost:3000");
+const token = localStorage.getItem("token");
+const socket = io("http://localhost:3000", {
+  auth: {token}, // <– this sends your token in the handshake during connection
+});
+
+//const socket = io("http://localhost:3000");
 // same port as I use in server.js
 
 function Chat() {
