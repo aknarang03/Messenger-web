@@ -2,6 +2,7 @@ import React from "react";
 import Login from "./Login";
 import Register from "./Register";
 import Chat from "./Chat";
+import Profile from "./Profile"
 import { Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -10,9 +11,10 @@ function App() {
       <h1>Messenger</h1>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register/>}/>
+        <Route path="/chat" element={<Chat/>}/>
+        <Route path="/user/:username" element={<Profile/>}/>
       </Routes>
     </>
   );

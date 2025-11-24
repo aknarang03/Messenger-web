@@ -120,7 +120,7 @@ function Chat() {
                             // brackets in general tell JSX to evaluate JS, but double is needed for style I guess because style already uses them
                             // note below: e is short for event
                         )}
-                        <strong>{msg.user?.username || 'Unknown'}:</strong>
+                        <strong onClick={() => navigate(`/user/${msg.user?.username}`)}>{msg.user?.username || 'Unknown'}:</strong>
                         <span>{msg.text}</span>
                     </div>
                 ))}
